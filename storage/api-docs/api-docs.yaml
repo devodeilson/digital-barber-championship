@@ -1,0 +1,146 @@
+openapi: 3.0.0
+info:
+  title: 'API de Campeonatos'
+  description: 'API para gerenciamento de campeonatos e conteúdos'
+  contact:
+    email: suporte@exemplo.com
+  version: 1.0.0
+servers:
+  - url: /api
+    description: 'API Server'
+paths:
+  /championships:
+    get:
+      tags:
+        - Campeonatos
+      summary: 'Lista todos os campeonatos'
+      operationId: getChampionships
+      parameters:
+        - name: page
+          in: query
+          description: 'Número da página'
+          required: false
+          schema:
+            type: integer
+        - name: per_page
+          in: query
+          description: 'Itens por página'
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'Lista de campeonatos'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Championship'
+      security:
+        - bearerAuth: []
+    post:
+      tags:
+        - Campeonatos
+      summary: 'Cria um novo campeonato'
+      operationId: createChampionship
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChampionshipRequest'
+      responses:
+        201:
+          description: 'Campeonato criado'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Championship'
+      security:
+        - bearerAuth: []
+
+components:
+  schemas:
+    Championship:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        rules:
+          type: string
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - draft
+            - active
+            - finished
+        entry_fee:
+          type: number
+        prize_pool:
+          type: number
+        max_participants:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ChampionshipRequest:
+      type: object
+      required:
+        - name
+        - description
+        - rules
+        - start_date
+        - end_date
+        - entry_fee
+        - prize_pool
+        - max_participants
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        rules:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        entry_fee:
+          type: number
+        prize_pool:
+          type: number
+        max_participants:
+          type: integer
+        banner_image:
+          type: string
+          format: binary
+        categories:
+          type: array
+          items:
+            type: integer
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
